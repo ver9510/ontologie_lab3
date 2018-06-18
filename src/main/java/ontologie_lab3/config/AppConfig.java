@@ -16,8 +16,6 @@ import org.springframework.web.servlet.view.JstlView;
 @Configuration
 @ComponentScan(basePackages = "ontologie_lab3")
 public class AppConfig implements WebMvcConfigurer {
-    String host = "0.0.0.0";
-    int port = Integer.valueOf(System.getenv("PORT"));
 
     @Override
     public void addResourceHandlers(final ResourceHandlerRegistry registry) {
