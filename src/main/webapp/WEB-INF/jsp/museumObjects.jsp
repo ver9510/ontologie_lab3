@@ -5,24 +5,15 @@
 <html lang="en">
 <head>
 
-    <%--<!-- Access the bootstrap Css like this,--%>
-    <%--Spring boot will handle the resource mapping automcatically -->--%>
-    <%--<link rel="stylesheet" type="text/css" href="webjars/bootstrap/3.3.7/css/bootstrap.min.css"/>--%>
-
-    <%--<!----%>
-    <%--<spring:url value="/css/main.css" var="springCss" />--%>
-    <%--<link href="${springCss}" rel="stylesheet" />--%>
-    <%---->--%>
-    <%--<c:url value="/css/main.css" var="jstlCss"/>--%>
-    <%--<link href="${jstlCss}" rel="stylesheet"/>--%>
-
 </head>
 <body>
 <a href="/">Back to index</a>
 <h1>View search result</h1>
+<p>There are objects from museum, which correspond to epoch of ${personName}.</p>
+<p>Each decade is represented by one object/</p>
 <table>
     <tr>
-    <c:forEach items="${foundDresses}" var="dress">
+        <c:forEach items="${foundDresses}" var="dress">
 
             <td>
                 <table>
@@ -59,7 +50,7 @@
                 </table>
             </td>
 
-    </c:forEach>
+        </c:forEach>
     </tr>
 </table>
 <%--<script type="text/javascript" src="webjars/bootstrap/3.3.7/js/bootstrap.min.js"></script>--%>

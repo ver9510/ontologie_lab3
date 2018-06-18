@@ -29,11 +29,18 @@ public class SampleController {
         Person person;
         if (request.getParameter("findPerson") == null) {
             person = wikiService.getPerson("Jane Austen").get(0);
+            model.put("person", person);
         } else {
-            person = wikiService.getPerson(request.getParameter("personToFind")).get(0);
+            List<Person> foundPersons = wikiService.getPerson(request.getParameter("personToFind"));
+            if (!foundPersons.isEmpty()) {
+                person = foundPersons.get(0);
+                model.put("person", person);
+            } else {
+                model.put("error", true);
+            }
         }
-        model.put("person", person);
-        return "index2";
+
+        return "index";
     }
 
     @RequestMapping("/findObjects")
@@ -44,6 +51,7 @@ public class SampleController {
         String personCountry = request.getParameter("personCountry");
         List<MuseumObject> dresses = museumService.findSuitableObjects("dress", personCountry, personBirthDateString, personDeathDateString);
         model.put("foundDresses", dresses);
+        model.put("personName", personName);
         return "museumObjects";
     }
 

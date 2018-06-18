@@ -1,7 +1,6 @@
 package ontologie_lab3.utils.jsonquery;
 
 import ontologie_lab3.utils.Constants;
-import ontologie_lab3.utils.ImageLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
