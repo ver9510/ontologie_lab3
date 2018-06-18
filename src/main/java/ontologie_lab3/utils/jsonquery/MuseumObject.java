@@ -12,13 +12,18 @@ public class MuseumObject {
     private String imageUrl;
     private String imagePath;
 
-    public MuseumObject(String name, String category, String country, String author, String year, String summary, String materials) {
+    public MuseumObject(String name, String objectNumber, String category, String country, String author, String yearStart, String yearEnd, String summary, String materials) {
         this.name = name;
-
+        this.objectNumber = objectNumber;
         this.category = category;
         this.country = country;
         this.author = author;
-        this.year = year;
+        if (yearEnd.equals(yearStart)) {
+            this.year = yearStart;
+        } else {
+            this.year = yearStart + "-" + yearEnd;
+        }
+
         this.summary = summary;
         this.materials = materials;
     }

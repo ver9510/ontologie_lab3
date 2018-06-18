@@ -1,5 +1,6 @@
 package ontologie_lab3.utils.jsonquery;
 
+import ontologie_lab3.utils.Constants;
 import ontologie_lab3.utils.ImageLoader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -39,7 +40,8 @@ public class MuseumQueries {
         int size = jsonArray.length();
         for (int i = 0; i < size; i++) {
             JSONObject jsonObject = jsonArray.getJSONObject(i).getJSONObject("fields");
-            MuseumObject museumObject = createMuseumObjectFromJson(jsonObject);
+            String object_number = jsonObject.getString("object_number");
+            MuseumObject museumObject = getObject(object_number);
             foundObjects.add(museumObject);
         }
 
@@ -74,14 +76,20 @@ public class MuseumQueries {
     private MuseumObject createFullMuseumObjectFromJson(JSONObject jsonObject) {
         MuseumObject museumObject = new MuseumObject(
                 jsonObject.getString("object"),
+                jsonObject.getString("object_number"),
                 jsonObject.getString("collection_code"),
                 jsonObject.getString("place"),
                 jsonObject.getString("artist"),
-                jsonObject.getString("year_start") + "-" + jsonObject.getString("year_end"),
+                jsonObject.getString("year_start"),
+                jsonObject.getString("year_end"),
                 jsonObject.getString("descriptive_line"),
                 jsonObject.getString("materials_techniques")
         );
-        String imageId = jsonObject.getJSONArray("image_set").getJSONObject(0).getJSONObject("fields").getString("image_id");
+        JSONArray image_set = jsonObject.getJSONArray("image_set");
+        String imageId = Constants.NO_IMAGE_PATH;
+        if (image_set.length() > 0) {
+            imageId = image_set.getJSONObject(0).getJSONObject("fields").getString("image_id");
+        }
         museumObject.setImageUrl(getImageUrl(imageId));
         return museumObject;
     }
