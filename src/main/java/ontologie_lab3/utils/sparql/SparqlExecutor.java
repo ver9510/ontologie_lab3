@@ -1,11 +1,10 @@
 package ontologie_lab3.utils.sparql;
 
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.bordercloud.sparql.EndpointException;
 
-import com.bordercloud.sparql.*;
+import java.util.HashMap;
+import java.util.List;
 
 public class SparqlExecutor {
     private EndpointExecutor executor = new EndpointExecutor();
@@ -16,20 +15,20 @@ public class SparqlExecutor {
         return executor.executeQuery(SparqlConstants.SPARQL_FIND_PERSON_QUICK_WITH_DATES, word, LIMIT);
     }
 
-    public HashMap<String, HashMap> searchPersonQuickWithDatesAndImage(String word) throws EndpointException {
-        return executor.executeQuery(SparqlConstants.SPARQL_FIND_PERSON_QUICK_WITH_DATES_AND_IMAGE, word, LIMIT);
+    public HashMap<String, HashMap> searchPerson(String word) throws EndpointException {
+        return executor.executeQuery(SparqlConstants.SPARQL_FIND_PERSON, word, LIMIT);
     }
 
     public HashMap<String, HashMap> searchCountryByName(String country) throws EndpointException {
-        return executor.executeQuery(SparqlConstants.SPARQL_FIND_COUNTRY_BY_NAME, country, LIMIT);
+        return executor.executeQuery(SparqlConstants.SPARQL_FIND_COUNTRY_BY_NAME, country);
     }
 
     public HashMap<String, HashMap> searchCountryByCity(String city) throws EndpointException {
-        return executor.executeQuery(SparqlConstants.SPARQL_FIND_COUNTRY_BY_CITY, city, LIMIT);
+        return executor.executeQuery(SparqlConstants.SPARQL_FIND_COUNTRY_BY_CITY, city);
     }
 
     public HashMap<String, HashMap> searchByYearsCountryAndSex(String country, String sex, String dateOfbirth, String dateOfDeath) throws EndpointException {
-        return executor.executeQuery(SparqlConstants.SPARQL_FIND_PEOPLE_BY_YEARS_COUNTRY_AND_SEX, "wd:"+country, sex, dateOfbirth, dateOfDeath, LIMIT);
+        return executor.executeQuery(SparqlConstants.SPARQL_FIND_PEOPLE_BY_YEARS_COUNTRY_AND_SEX, "wd:" + country, sex, dateOfbirth, dateOfDeath, LIMIT);
     }
 
     public HashMap<String, HashMap> searchByYearsCountryAndSexForEngland(String sex, String dateOfbirth, String dateOfDeath) throws EndpointException {
@@ -38,12 +37,13 @@ public class SparqlExecutor {
 
 
 
+
     public static void main(String[] args) {
         try {
             System.out.println("Тестирование запросов SPARQL");
             SparqlExecutor executor = new SparqlExecutor();
-            ArrayList<Person> sm = Converter.convertToPerson(executor.searchPersonQuickWithDatesAndImage("Jane Austen"));
-            for (Person person : sm) {
+            List<Person> sm = Converter.convertToPerson(executor.searchPerson("Jane Austen"));
+            for (Person person: sm) {
                 System.out.println(person.toString());
             }
         } catch (Exception e) {

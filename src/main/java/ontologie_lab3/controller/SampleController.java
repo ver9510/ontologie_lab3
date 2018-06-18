@@ -62,6 +62,7 @@ public class SampleController {
         String objectNumber = request.getParameter("dressObjectNumber");
         List<MuseumObject> dresses = museumService.findMore("dress", country, dressYear);
         model.put("foundDresses", dresses);
+        model.put("year", dressYear);
         return "museumObjects";
     }
 

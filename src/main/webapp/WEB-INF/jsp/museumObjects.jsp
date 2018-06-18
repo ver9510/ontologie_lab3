@@ -9,8 +9,8 @@
 <body>
 <a href="/">Back to index</a>
 <h1>View search result</h1>
-<p>There are objects from museum, which correspond to epoch of ${personName}.</p>
-<p>Each decade is represented by one object/</p>
+<p>There are objects from museum, which correspond to epoch of ${personName} ${year}.</p>
+<p>Each decade is represented by one object.</p>
 <table>
     <tr>
         <c:forEach items="${foundDresses}" var="dress">

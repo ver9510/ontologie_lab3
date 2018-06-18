@@ -1,32 +1,28 @@
 package ontologie_lab3.service;
 
 import com.bordercloud.sparql.EndpointException;
-import lombok.RequiredArgsConstructor;
 import ontologie_lab3.model.Country;
 import ontologie_lab3.utils.Constants;
 import ontologie_lab3.utils.DateUtils;
 import ontologie_lab3.utils.sparql.Converter;
 import ontologie_lab3.utils.sparql.Person;
 import ontologie_lab3.utils.sparql.SparqlExecutor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
 
 @Service
 public class WikiServiceImpl implements WikiService {
     @Override
     public List<Person> getPerson(String name) {
         SparqlExecutor executor = new SparqlExecutor();
-        ArrayList<Person> listOfFoundPeople = null;
+        List<Person> listOfFoundPeople = null;
         try {
-            listOfFoundPeople = Converter.convertToPerson(executor.searchPersonQuickWithDatesAndImage(name));
+            listOfFoundPeople = Converter.convertToPerson(executor.searchPerson(name));
         } catch (EndpointException e) {
             e.printStackTrace();
         }
@@ -42,7 +38,8 @@ public class WikiServiceImpl implements WikiService {
         LocalDateTime endDate = LocalDate.of(Integer.valueOf(splittedDates[1]), 12, 31).atStartOfDay();
 
 
-        ArrayList<Person> listOfFoundPeople = null;
+        List<Person> listOfFoundPeople = new ArrayList<>();
+        List<String> listOfFoundPeopleNames;
         try {
             String nameOfPlace = country.split(" ")[0];
             Country foundCountry = Converter.convertToCountry(executor.searchCountryByName(nameOfPlace));
@@ -51,9 +48,12 @@ public class WikiServiceImpl implements WikiService {
             }
             if (foundCountry != null) {
                 if (country.contains("England") || Constants.NAMES_OF_ENGLAND.contains(foundCountry.getName())) {
-                    listOfFoundPeople = Converter.convertToPerson(executor.searchByYearsCountryAndSexForEngland(sex, startDate.format(DateTimeFormatter.ISO_DATE_TIME), endDate.format(DateTimeFormatter.ISO_DATE_TIME)));
+                    listOfFoundPeopleNames = Converter.convertToListOfPeople(executor.searchByYearsCountryAndSexForEngland(sex, startDate.format(DateTimeFormatter.ISO_DATE_TIME), endDate.format(DateTimeFormatter.ISO_DATE_TIME)));
                 } else {
-                    listOfFoundPeople = Converter.convertToPerson(executor.searchByYearsCountryAndSex(foundCountry.getId(), sex, startDate.format(DateTimeFormatter.ISO_DATE_TIME), endDate.format(DateTimeFormatter.ISO_DATE_TIME)));
+                    listOfFoundPeopleNames = Converter.convertToListOfPeople(executor.searchByYearsCountryAndSex(foundCountry.getId(), sex, startDate.format(DateTimeFormatter.ISO_DATE_TIME), endDate.format(DateTimeFormatter.ISO_DATE_TIME)));
+                }
+                for (String name: listOfFoundPeopleNames) {
+                    listOfFoundPeople.addAll(getPerson(name));
                 }
             }
         } catch (EndpointException e) {

@@ -5,13 +5,17 @@ import ontologie_lab3.model.Country;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class Converter {
-    public static ArrayList<Person> convertToPerson(HashMap<String, HashMap> data) throws EndpointException {
-        ArrayList<Person> result = new ArrayList<>();
-        ArrayList listOfResults = ((ArrayList<HashMap<String, String>>) data
+    public static List<Person> convertToPerson(HashMap<String, HashMap> data) throws EndpointException {
+        List<Person> result = new ArrayList<>();
+        List listOfResults = ((ArrayList<HashMap<String, String>>) data
                 .get("result").get("rows"));
-        for (HashMap<String, String> item: (ArrayList<HashMap<String, String>>) listOfResults) {
+        if (listOfResults.size() > 10) {
+            listOfResults = listOfResults.subList(0, 10);
+        }
+        for (HashMap<String, String> item: (List<HashMap<String, String>>) listOfResults) {
             if (result.stream().noneMatch(p -> p.getPerson().equals(item.get("person")))) {
                 result.add(new Person(
                         item.get("person"),
@@ -28,7 +32,15 @@ public class Converter {
         }
         return result;
     }
-
+    public static List<String> convertToListOfPeople(HashMap<String, HashMap> data) throws EndpointException {
+        List<String> result = new ArrayList<>();
+        List listOfResults = ((ArrayList<HashMap<String, String>>) data
+                .get("result").get("rows"));
+        for (HashMap<String, String> item: (List<HashMap<String, String>>) listOfResults) {
+            result.add(item.get("personLabel"));
+        }
+        return result;
+    }
     public static Country convertToCountry(HashMap<String, HashMap> data) {
         ArrayList<Person> result = new ArrayList<>();
         ArrayList listOfResults = ((ArrayList<HashMap<String, String>>) data
@@ -38,8 +50,8 @@ public class Converter {
         }
         HashMap<String, String> countryObject = ((ArrayList<HashMap<String, String>>) listOfResults).get(0);
         String[] parts = countryObject.get("country").split("/");
-        String id = parts[parts.length-1];
-        Country country = new Country(id,countryObject.get("countryLabel"));
+        String id = parts[parts.length - 1];
+        Country country = new Country(id, countryObject.get("countryLabel"));
         return country;
     }
 }
