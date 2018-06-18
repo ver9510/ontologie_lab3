@@ -44,7 +44,11 @@ def urlFile = { url, name ->
     files(file.absolutePath)
 }
 
-task stage(dependsOn: ['jar', 'build', 'clean'])
+task stage(
+        dependsOn:
+                ['jar','build'])
+
+
 
 dependencies {
     compile urlFile(jarPath, jarName)
@@ -57,7 +61,7 @@ dependencies {
 
 //    compile 'io.rest-assured:rest-assured:3.0.7'
     compile 'org.json:json:20180130'
-
+    compile 'com.github.jsimone:webapp-runner:8.5.23.0'
     compile 'javax:javaee-api:+'
     compile 'org.springframework:spring-context:5.0.4.RELEASE'
     compile 'org.springframework:spring-webmvc:+'
@@ -80,5 +84,5 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
-    compile 'com.github.jsimone:webapp-runner:8.5.23.0'
+
 }
