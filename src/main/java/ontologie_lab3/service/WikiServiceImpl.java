@@ -2,18 +2,24 @@ package ontologie_lab3.service;
 
 import com.bordercloud.sparql.EndpointException;
 import lombok.RequiredArgsConstructor;
+import ontologie_lab3.model.Country;
+import ontologie_lab3.utils.Constants;
+import ontologie_lab3.utils.DateUtils;
 import ontologie_lab3.utils.sparql.Converter;
 import ontologie_lab3.utils.sparql.Person;
 import ontologie_lab3.utils.sparql.SparqlExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class WikiServiceImpl implements WikiService {
     @Override
     public List<Person> getPerson(String name) {
@@ -32,12 +38,23 @@ public class WikiServiceImpl implements WikiService {
         String startAndEndDatesString = getStartAndEndDates(dressYear);
         String[] splittedDates = startAndEndDatesString.split("-");
         SparqlExecutor executor = new SparqlExecutor();
+        LocalDateTime startDate = LocalDate.of(Integer.valueOf(splittedDates[0]), 1, 1).atStartOfDay();
+        LocalDateTime endDate = LocalDate.of(Integer.valueOf(splittedDates[1]), 12, 31).atStartOfDay();
+
+
         ArrayList<Person> listOfFoundPeople = null;
         try {
-            if (country.equalsIgnoreCase("England")) {
-                listOfFoundPeople = Converter.convertToPerson(executor.searchByYearsCountryAndSexForEngland(sex, splittedDates[0], splittedDates[1]));
-            } else {
-                listOfFoundPeople = Converter.convertToPerson(executor.searchByYearsCountryAndSex(country, sex, splittedDates[0], splittedDates[1]));
+            String nameOfPlace = country.split(" ")[0];
+            Country foundCountry = Converter.convertToCountry(executor.searchCountryByName(nameOfPlace));
+            if (foundCountry == null) {
+                foundCountry = Converter.convertToCountry(executor.searchCountryByCity(nameOfPlace));
+            }
+            if (foundCountry != null) {
+                if (country.contains("England") || Constants.NAMES_OF_ENGLAND.contains(foundCountry.getName())) {
+                    listOfFoundPeople = Converter.convertToPerson(executor.searchByYearsCountryAndSexForEngland(sex, startDate.format(DateTimeFormatter.ISO_DATE_TIME), endDate.format(DateTimeFormatter.ISO_DATE_TIME)));
+                } else {
+                    listOfFoundPeople = Converter.convertToPerson(executor.searchByYearsCountryAndSex(foundCountry.getId(), sex, startDate.format(DateTimeFormatter.ISO_DATE_TIME), endDate.format(DateTimeFormatter.ISO_DATE_TIME)));
+                }
             }
         } catch (EndpointException e) {
             e.printStackTrace();
@@ -46,32 +63,18 @@ public class WikiServiceImpl implements WikiService {
     }
 
     private String getStartAndEndDates(String dressYear) {
-        String[] dates = dressYear.split(" ");
-        if (dates.length > 1) {
-            int randomIndex = new Random(dates.length).nextInt();
-            String[] splittedByHyphen = dates[randomIndex].split("-");
-            if (splittedByHyphen.length > 1) {
-                return dates[randomIndex];
-            } else {
-                return getDecadeBySingleYear(dressYear);
+        String[] splittedByHyphen = dressYear.split("-");
+        if (splittedByHyphen.length > 1) {
+            if (splittedByHyphen[0].equals(splittedByHyphen[1])) {
+                return DateUtils.getDecadeBySingleYear(splittedByHyphen[0]);
             }
+            return dressYear;
         } else {
-            String[] splittedByHyphen = dressYear.split("-");
-            if (splittedByHyphen.length > 1) {
-                return dressYear;
-            } else {
-                return getDecadeBySingleYear(dressYear);
-            }
+            return DateUtils.getDecadeBySingleYear(dressYear);
         }
 
+
     }
 
-    private String getDecadeBySingleYear(String dressYear) {
-        String start;
-        String end;
-        Integer year = Integer.valueOf(dressYear);
-        start = String.valueOf(year / 10 * 10);
-        end = String.valueOf(year / 10 * 10 + 10);
-        return start + "-" + end;
-    }
+
 }

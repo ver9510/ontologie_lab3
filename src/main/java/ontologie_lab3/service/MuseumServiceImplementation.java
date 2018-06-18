@@ -1,8 +1,14 @@
 package ontologie_lab3.service;
 
+import com.bordercloud.sparql.EndpointException;
 import lombok.RequiredArgsConstructor;
+import ontologie_lab3.model.Country;
+import ontologie_lab3.utils.Constants;
+import ontologie_lab3.utils.DateUtils;
 import ontologie_lab3.utils.jsonquery.MuseumObject;
 import ontologie_lab3.utils.jsonquery.MuseumQueries;
+import ontologie_lab3.utils.sparql.Converter;
+import ontologie_lab3.utils.sparql.SparqlExecutor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -11,11 +17,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class MuseumServiceImplementation implements MuseumService {
-    private final static List<String> NAMES_OF_ENGLAND = Arrays.asList("United Kingdom", "Kingdom of Great Britain", "United Kingdom of Great Britain and Ireland");
 
     private MuseumQueries queries = new MuseumQueries();
 
@@ -23,38 +28,64 @@ public class MuseumServiceImplementation implements MuseumService {
     public List<MuseumObject> findSuitableObjects(String word, String country, String personBirthDateString, String personDeathDateString) {
         LocalDate birthDate = LocalDate.parse(personBirthDateString);
         LocalDate deathDate = LocalDate.parse(personDeathDateString);
-        List<String> listOfDecades = getListOfDecades(birthDate.getYear(), deathDate.getYear());
+        List<String> listOfDecades = DateUtils.getListOfDecades(birthDate.getYear(), deathDate.getYear());
         List<MuseumObject> foundMuseumObjectsForEachDecade = new ArrayList<>();
-        if (NAMES_OF_ENGLAND.contains(country)) {
+        if (Constants.NAMES_OF_ENGLAND.contains(country)) {
             country = "England";
         }
-        for (String decade : listOfDecades) {
+        for (String decade: listOfDecades) {
             String endDate = decade.split("-")[1];
             String startDate = decade.split("-")[0];
             List<MuseumObject> museumObjects = queries.search(word, startDate, endDate, country, true);
-
-            int randomIndex = new Random().nextInt(museumObjects.size());
-            MuseumObject randomObject = museumObjects.get(randomIndex);
-            if (!foundMuseumObjectsForEachDecade.contains(randomObject)) {
-                foundMuseumObjectsForEachDecade.add(randomObject);
+            if (museumObjects.size() > 0) {
+                int randomIndex = new Random().nextInt(museumObjects.size());
+                MuseumObject randomObject = museumObjects.get(randomIndex);
+                if (foundMuseumObjectsForEachDecade.stream().map(MuseumObject::getObjectNumber).noneMatch(on -> on.equals(randomObject.getObjectNumber()))) {
+                    foundMuseumObjectsForEachDecade.add(randomObject);
+                }
             }
-//            else {
-//                foundMuseumObjectsForEachDecade.add(museumObjects.get(randomIndex>1?randomIndex-1:0));
-//            }
         }
         return foundMuseumObjectsForEachDecade;
     }
 
-    private List<String> getListOfDecades(int birthYear, int deathYear) {
-        int startYear = birthYear / 10 * 10;
-        int endYear = deathYear / 10 * 10 + 10;
-        List<String> resultDecades = new ArrayList<>();
-        int middleYear = startYear + 10;
-        for (int i = startYear; i < endYear; i += 10) {
-            String decade = i + "-" + middleYear;
-            middleYear += 10;
-            resultDecades.add(decade);
+    public List<MuseumObject> findMore(String word, String country, String dressYear) {
+        String nameOfPlace = country.split(" ")[0];
+        SparqlExecutor executor = new SparqlExecutor();
+        Country foundCountry = null;
+        if (country.contains("England")) {
+            country = "England";
+        } else {
+            try {
+                foundCountry = Converter.convertToCountry(executor.searchCountryByName(nameOfPlace));
+                if (foundCountry == null) {
+                    foundCountry = Converter.convertToCountry(executor.searchCountryByCity(nameOfPlace));
+                }
+            } catch (EndpointException e) {
+                e.printStackTrace();
+            }
+
+            if (Constants.NAMES_OF_ENGLAND.contains(foundCountry.getName())) {
+                country = "England";
+            } else {
+                country = foundCountry.getName();
+            }
         }
-        return resultDecades;
+        String[] splittedYears = dressYear.split("-");
+        String startDate;
+        String endDate;
+        String decadeBySingleYear;
+        if (splittedYears.length == 1) {
+            decadeBySingleYear = DateUtils.getDecadeBySingleYear(dressYear);
+
+        } else {
+            decadeBySingleYear = DateUtils.getDecadeBySingleYear(splittedYears[0]);
+        }
+        String[] years = decadeBySingleYear.split("-");
+        startDate = years[0];
+        endDate = years[1];
+        List<MuseumObject> museumObjects = queries.search(word, startDate, endDate, country, true);
+        return museumObjects;
     }
+
+
 }

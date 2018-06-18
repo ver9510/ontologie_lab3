@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface MuseumService {
     List<MuseumObject> findSuitableObjects(String word, String country, String personBirthDateString, String personDeathDateString);
+    List<MuseumObject> findMore(String word, String country, String dressYear);
 }
