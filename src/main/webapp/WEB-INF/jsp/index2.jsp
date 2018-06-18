@@ -34,7 +34,7 @@
     <input name="personName" type="hidden" value="${person.personLabel}">
     <input name="personBirthDate" type="hidden" value="${person.dateOfBirth}">
     <input name="personDeathDate" type="hidden" value="${person.dateOfDeath}">
-    <input name="personCountry" type="text" value="${person.country}">
+    <input name="personCountry" type="hidden" value="${person.country}"><br>
     <input name="findExponates" type="submit" value="Find suitable showpieces">
 </form>
 
