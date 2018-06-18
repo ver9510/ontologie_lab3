@@ -47,6 +47,8 @@ def urlFile = { url, name ->
 task stage(dependsOn: ['build', 'clean'])
 build.mustRunAfter clean
 
+stage.dependsOn(urlFile)
+
 dependencies {
     compile urlFile(jarPath, jarName)
 
