@@ -1,6 +1,6 @@
 package ontologie_lab3.controller;
 
-import lombok.RequiredArgsConstructor;
+import ontologie_lab3.enums.Gender;
 import ontologie_lab3.service.MuseumService;
 import ontologie_lab3.service.WikiService;
 import ontologie_lab3.utils.jsonquery.MuseumObject;
@@ -14,10 +14,15 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class SampleController {
     private final WikiService wikiService;
     private final MuseumService museumService;
+
+    @Autowired
+    public SampleController(WikiService wikiService, MuseumService museumService) {
+        this.wikiService = wikiService;
+        this.museumService = museumService;
+    }
 
     @RequestMapping("/")
     public String welcome(Map<String, Object> model, HttpServletRequest request) {
@@ -42,13 +47,23 @@ public class SampleController {
         return "museumObjects";
     }
 
+    @RequestMapping("/findMore")
+    public String findMore(Map<String, Object> model, HttpServletRequest request) {
+        String country = request.getParameter("dressCountry");
+        String dressYear = request.getParameter("dressYear");
+        String objectNumber = request.getParameter("dressObjectNumber");
+        List<MuseumObject> dresses = museumService.findMore("dress", country, dressYear);
+        model.put("foundDresses", dresses);
+        return "museumObjects";
+    }
+
     @RequestMapping("/findPeopleOfThatPeriod")
     public String findPeople(Map<String, Object> model, HttpServletRequest request) {
         String country = request.getParameter("dressCountry");
         String dressYear = request.getParameter("dressYear");
         String objectNumber = request.getParameter("dressObjectNumber");
 
-        List<Person> people = wikiService.search(country, "female", dressYear);
+        List<Person> people = wikiService.search(country, Gender.FEMALE.toString(), dressYear);
         model.put("foundPeople", people);
         model.put("year", dressYear);
         return "people";
