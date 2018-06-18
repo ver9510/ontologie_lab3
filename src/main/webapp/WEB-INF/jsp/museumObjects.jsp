@@ -40,7 +40,7 @@
                     </tr>
                     <tr>
                         <td>
-                            <form>
+                            <form action="/findMore">
                                 <input name="dressYear" type="hidden" value="${dress.year}">
                                 <input name="dressCountry" type="hidden" value="${dress.country}">
                                 <input name="dressObjectNumber" type="hidden" value="${dress.objectNumber}">
