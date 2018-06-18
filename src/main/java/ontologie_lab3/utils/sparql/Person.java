@@ -1,6 +1,7 @@
 package ontologie_lab3.utils.sparql;
 
 
+import ontologie_lab3.utils.Constants;
 import ontologie_lab3.utils.ImageLoader;
 import org.springframework.util.StringUtils;
 
@@ -27,13 +28,17 @@ public class Person {
         this.link = link;
         this.dateOfBirth = LocalDate.parse(dateOfBirth, DateTimeFormatter.ISO_DATE_TIME);
         this.dateOfDeath = LocalDate.parse(dateOfDeath, DateTimeFormatter.ISO_DATE_TIME);
-        this.imageUrl = imgUrl;
+        if (!(imgUrl == null)) {
+            this.imageUrl = imgUrl;
+        } else {
+            this.imageUrl = Constants.NO_IMAGE_PATH;
+        }
         this.sex = sex;
         this.country = country;
     }
 
     public void loadImage(String imgUrl) {
-        imagePath = ImageLoader.loadImage(imgUrl,StringUtils.replace(personLabel, " ","_")+".jpg");
+        imagePath = ImageLoader.loadImage(imgUrl, StringUtils.replace(personLabel, " ", "_") + ".jpg");
 
     }
 

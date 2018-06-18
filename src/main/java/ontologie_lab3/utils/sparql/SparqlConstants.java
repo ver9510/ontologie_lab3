@@ -3,6 +3,14 @@ package ontologie_lab3.utils.sparql;
 public class SparqlConstants {
     public static final String ENDPOINT = "https://query.wikidata.org/sparql";
 
+    public static final String SPARQL_FIND_COUNTRY_BY_CITY =
+            "SELECT distinct ?place ?placeLabel ?country ?countryLabel WHERE {\n" +
+                    "  ?place ?label \"%s\"@en.\n" +
+                    "  SERVICE wikibase:label { bd:serviceParam wikibase:language \"[AUTO_LANGUAGE],en\". }\n" +
+                    "  OPTIONAL { ?place wdt:P17 ?country. }\n" +
+                    "}\n" +
+                    "ORDER BY STRLEN(STR(?place))\n" +
+                    "LIMIT 1";
     public static final String SPARQL_FIND_COUNTRY_BY_NAME =
             "SELECT distinct ?country ?countryLabel WHERE {\n" +
                     "  ?country ?label \"%s\".\n" +
@@ -47,7 +55,7 @@ public class SparqlConstants {
     public static final String SPARQL_FIND_PEOPLE_BY_YEARS_AND_SEX_FOR_ENGLAND =
                     "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
                     "\n" +
-                    "SELECT DISTINCT ?person ?description ?date_of_birth ?date_of_death ?image ?date_of_birthLabel ?nativeLabel ?personLabel ?native_label WHERE {\n" +
+                    "SELECT DISTINCT ?person ?description ?date_of_birth ?date_of_death ?image ?date_of_birthLabel ?personLabel ?country_of_citizenship ?country_of_citizenshipLabel WHERE {\n" +
                     "  ?person wdt:P31 wd:Q5.\n" +
                     "  ?person wdt:P21 %s.\n" +
                     "  { ?person wdt:P27 wd:Q145. }\n" +
@@ -65,6 +73,7 @@ public class SparqlConstants {
                     "  OPTIONAL { ?person wdt:P570 ?date_of_death. }\n" +
                     "  OPTIONAL { ?person wdt:P18 ?image. }\n" +
                     "  OPTIONAL { ?person wdt:P21 ?sex_or_gender. }\n" +
+                            "  OPTIONAL { ?person wdt:P27 ?country_of_citizenship. }\n"+
                     "  FILTER(?date_of_death >= \"%s\"^^xsd:dateTime)\n" +
                     "  FILTER(?date_of_birth <= \"%s\"^^xsd:dateTime)\n" +
                     "}\n" +
@@ -74,7 +83,7 @@ public class SparqlConstants {
     public static final String SPARQL_FIND_PEOPLE_BY_YEARS_COUNTRY_AND_SEX =
             "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#>\n" +
                     "\n" +
-                    "SELECT DISTINCT ?person ?description ?date_of_birth ?date_of_death ?image ?date_of_birthLabel ?personLabel ?sex_or_gender ?sex_or_genderLabel WHERE {\n" +
+                    "SELECT DISTINCT ?person ?description ?date_of_birth ?date_of_death ?image ?date_of_birthLabel ?personLabel ?sex_or_gender ?sex_or_genderLabel ?country_of_citizenship ?country_of_citizenshipLabel WHERE {\n" +
                     "  ?person wdt:P31 wd:Q5.\n" +
                     "  ?person wdt:P27 %s.\n" +
                     "  ?person wdt:P21 %s.\n" +
@@ -87,6 +96,7 @@ public class SparqlConstants {
                     "  OPTIONAL { ?person wdt:P570 ?date_of_death. }\n" +
                     "  OPTIONAL { ?person wdt:P18 ?image. }\n" +
                     "  OPTIONAL { ?person wdt:P21 ?sex_or_gender. }\n" +
+                    "  OPTIONAL { ?person wdt:P27 ?country_of_citizenship. }\n"+
                     "  FILTER(?date_of_birth <= \"%s\"^^xsd:dateTime)\n" +
                     "  FILTER(?date_of_death >= \"%s\"^^xsd:dateTime)\n" +
                     "}\n" +

@@ -1,6 +1,7 @@
 package ontologie_lab3.utils.sparql;
 
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -23,8 +24,12 @@ public class SparqlExecutor {
         return executor.executeQuery(SparqlConstants.SPARQL_FIND_COUNTRY_BY_NAME, country, LIMIT);
     }
 
+    public HashMap<String, HashMap> searchCountryByCity(String city) throws EndpointException {
+        return executor.executeQuery(SparqlConstants.SPARQL_FIND_COUNTRY_BY_CITY, city, LIMIT);
+    }
+
     public HashMap<String, HashMap> searchByYearsCountryAndSex(String country, String sex, String dateOfbirth, String dateOfDeath) throws EndpointException {
-        return executor.executeQuery(SparqlConstants.SPARQL_FIND_PEOPLE_BY_YEARS_COUNTRY_AND_SEX, country, sex, dateOfbirth, dateOfDeath, LIMIT);
+        return executor.executeQuery(SparqlConstants.SPARQL_FIND_PEOPLE_BY_YEARS_COUNTRY_AND_SEX, "wd:"+country, sex, dateOfbirth, dateOfDeath, LIMIT);
     }
 
     public HashMap<String, HashMap> searchByYearsCountryAndSexForEngland(String sex, String dateOfbirth, String dateOfDeath) throws EndpointException {
@@ -33,10 +38,8 @@ public class SparqlExecutor {
 
 
 
-    // ТОЛЬКО ДЛЯ ОТЛАДКИ! В ЧИСТОМ ВИДЕ НЕ ИСПОЛЬЗОВАТЬ!
     public static void main(String[] args) {
         try {
-            // Тестирование запросов SPARQL
             System.out.println("Тестирование запросов SPARQL");
             SparqlExecutor executor = new SparqlExecutor();
             ArrayList<Person> sm = Converter.convertToPerson(executor.searchPersonQuickWithDatesAndImage("Jane Austen"));
