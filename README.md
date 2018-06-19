@@ -16,3 +16,6 @@
 1. Командой gradle war собрать war-архив
 2. Скопировать war в каталог <TOMCAT_HOME>\webapps.
 3. Запустить Tomcat.
+
+## Ссылка на развернутое приложение
+https://damp-eyrie-75850.herokuapp.com/
