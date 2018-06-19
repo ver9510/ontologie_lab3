@@ -1,1 +1,1 @@
-web: java -Dserver.port=$PORT -jar build/server/webapp-runner-*.jar build/libs/*.war
+web: java -Dserver.port=$PORT $JAVA_OPTS -jar build/libs/ontologie_lab3-1.0-SNAPSHOT.jar

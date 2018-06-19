@@ -1,4 +1,7 @@
 buildscript {
+    ext {
+        springBootVersion = '1.5.3.RELEASE'
+    }
     repositories {
         mavenCentral()
         maven {
@@ -10,12 +13,15 @@ buildscript {
         maven {
             url "https://maven.java.net/content/groups/public/"
         }
+        maven { url 'http://dl.bintray.com/vermeulen-mp/gradle-plugins' }
+        maven { url 'https://repo.spring.io/libs-snapshot' }
 
     }
 
-
     dependencies {
         classpath "io.franzbecker:gradle-lombok:1.11"
+        classpath "org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}"
+
     }
 }
 
@@ -28,8 +34,9 @@ version '1.0-SNAPSHOT'
 
 apply plugin: 'java'
 apply plugin: 'io.franzbecker.gradle-lombok'
-apply plugin: 'war'
-
+jar{
+    enabled = true
+}
 
 sourceCompatibility = 1.8
 
@@ -56,11 +63,10 @@ def urlFile = { url, name ->
     }
     files(file.absolutePath)
 }
+task buildThis(){build}
+task stage(dependsOn: ['buildThis', 'clean'])
 
-task stage() {
-    dependsOn clean, war
-}
-war.mustRunAfter clean
+buildThis.mustRunAfter(clean)
 
 task copyToLib(type: Copy) {
     into "$buildDir/server"
@@ -72,8 +78,10 @@ task copyToLib(type: Copy) {
 task downloadUrlFile() {
     doFirst { urlFile(jarPath, jarName) }
 }
-stage.dependsOn(downloadUrlFile)
-stage.dependsOn(copyToLib)
+buildThis.dependsOn(downloadUrlFile)
+jar.dependsOn(buildThis)
+jar.dependsOn(copyToLib)
+stage.dependsOn(jar)
 
 
 
