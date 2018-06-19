@@ -19,3 +19,6 @@
 
 ## Ссылка на развернутое приложение
 https://damp-eyrie-75850.herokuapp.com/
+
+## Ссылка на скринкаст
+https://youtu.be/6AYmTSoWTyY
