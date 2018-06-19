@@ -81,7 +81,7 @@ task downloadUrlFile() {
 buildThis.dependsOn(downloadUrlFile)
 jar.dependsOn(buildThis)
 jar.dependsOn(copyToLib)
-stage.dependsOn(jar)
+stage.dependsOn(assemble)
 
 
 
