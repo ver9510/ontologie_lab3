@@ -79,8 +79,9 @@ task downloadUrlFile() {
     doFirst { urlFile(jarPath, jarName) }
 }
 buildThis.dependsOn(downloadUrlFile)
-jar.dependsOn(buildThis)
-jar.dependsOn(copyToLib)
+bootJar.dependsOn(jar)
+bootJar.dependsOn(buildThis)
+bootJar.dependsOn(copyToLib)
 stage.dependsOn(assemble)
 
 
