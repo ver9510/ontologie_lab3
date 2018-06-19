@@ -1,6 +1,3 @@
-group 'ontologie_lab3'
-version '1.0-SNAPSHOT'
-
 buildscript {
     repositories {
         mavenCentral()
@@ -10,16 +7,29 @@ buildscript {
         maven {
             url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
         }
+        maven {
+            url "https://maven.java.net/content/groups/public/"
+        }
 
     }
+
+
     dependencies {
         classpath "io.franzbecker:gradle-lombok:1.11"
     }
 }
 
+plugins {
+    id "org.springframework.boot" version "2.0.1.RELEASE"
+}
+
+group 'ontologie_lab3'
+version '1.0-SNAPSHOT'
+
 apply plugin: 'java'
 apply plugin: 'io.franzbecker.gradle-lombok'
 apply plugin: 'war'
+
 
 sourceCompatibility = 1.8
 
@@ -27,6 +37,9 @@ repositories {
     mavenCentral()
     maven {
         url "https://repository.jboss.org/nexus/content/repositories/thirdparty-releases/"
+    }
+    maven {
+        url "https://maven.java.net/content/groups/public/"
     }
 }
 def jarPath = 'https://github.com/BorderCloud/SPARQL-JAVA/blob/master/dist/SPARQL-JAVA.jar?raw=true'
@@ -56,8 +69,8 @@ task copyToLib(type: Copy) {
     }
 }
 
-task downloadUrlFile(){
-    doFirst {urlFile(jarPath, jarName)}
+task downloadUrlFile() {
+    doFirst { urlFile(jarPath, jarName) }
 }
 stage.dependsOn(downloadUrlFile)
 stage.dependsOn(copyToLib)
@@ -70,10 +83,10 @@ dependencies {
     compile 'org.openrdf:openrdf-queryparser-sparql:+'
     compile 'org.openrdf:openrdf-repository-api:2.0.1'
     compile 'org.eclipse.rdf4j:rdf4j-repository-sparql:2.3.1'
+    compile 'org.springframework.boot:spring-boot-starter-web:+'
 
-//    compile 'com.googlecode.json-simple:json-simple:1.1.1'
 
-//    compile 'io.rest-assured:rest-assured:3.0.7'
+
     compile 'org.json:json:20180130'
 
     compile 'com.github.jsimone:webapp-runner:8.5.23.0'
@@ -100,5 +113,9 @@ dependencies {
 
     testCompile group: 'junit', name: 'junit', version: '4.12'
 
+    compile 'javax.json.bind:javax.json.bind-api:1.0'
 
+    compile 'org.eclipse:yasson:1.0'
+
+    compile 'org.glassfish:javax.json:1.1'
 }

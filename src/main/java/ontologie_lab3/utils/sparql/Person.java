@@ -24,7 +24,9 @@ public class Person {
         this.description = description;
         this.link = link;
         this.dateOfBirth = LocalDate.parse(dateOfBirth, DateTimeFormatter.ISO_DATE_TIME);
-        this.dateOfDeath = LocalDate.parse(dateOfDeath, DateTimeFormatter.ISO_DATE_TIME);
+        if (dateOfDeath != null) {
+            this.dateOfDeath = LocalDate.parse(dateOfDeath, DateTimeFormatter.ISO_DATE_TIME);
+        }
         if (!(imgUrl == null)) {
             this.imageUrl = imgUrl;
         } else {
